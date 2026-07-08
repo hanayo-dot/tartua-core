@@ -4,7 +4,6 @@ services:
   postgres:
     image: postgres:17
     container_name: tartua-postgres
-
     restart: unless-stopped
 
     environment:
@@ -18,5 +17,21 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+    networks:
+      - tartua-network
+
+  migrate:
+    image: migrate/migrate
+    container_name: tartua-migrate
+
+    volumes:
+      - ./internal/database/migrations:/migrations
+
+    networks:
+      - tartua-network
+
 volumes:
   postgres_data:
+
+networks:
+  tartua-network:
