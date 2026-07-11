@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+
 	"github.com/hanayo-dot/tartua-core/internal/models"
 	"github.com/hanayo-dot/tartua-core/internal/services"
 )
@@ -28,16 +29,14 @@ func (h *UserHandler) Register(c *gin.Context) {
 		return
 	}
 
-	user, err := h.service.Register(req)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
+	if err := h.service.Register(&req); err != nil {
+		c.JSON(http.StatusConflict, gin.H{
 			"error": err.Error(),
 		})
 		return
 	}
 
 	c.JSON(http.StatusCreated, gin.H{
-		"message": "User created successfully",
-		"user":    user,
+		"message": "User registered successfully",
 	})
 }
