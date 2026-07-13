@@ -6,31 +6,101 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/hanayo-dot/tartua-core/internal/config"
 	"github.com/hanayo-dot/tartua-core/internal/handlers"
+	"github.com/hanayo-dot/tartua-core/internal/middleware"
 	"github.com/hanayo-dot/tartua-core/internal/repositories"
 	"github.com/hanayo-dot/tartua-core/internal/services"
 )
 
-func RegisterRoutes(db *sql.DB) *gin.Engine {
+func RegisterRoutes(db *sql.DB, cfg *config.Config) *gin.Engine {
 	router := gin.Default()
 
-	// Health routes
+	// Public routes
 	router.GET("/", Home)
 	router.GET("/health", Health)
 
-	// Dependency Injection
-	userRepo := repositories.NewUserRepository(db)
-	userService := services.NewUserService(userRepo)
-	authHandler := handlers.NewAuthHandler(userService)
+	// ==========================================
+	// Repositories
+	// ==========================================
 
+	userRepo := repositories.NewUserRepository(db)
+	creatorRepo := repositories.NewCreatorRepository(db)
+	goalRepo := repositories.NewGoalRepository(db)
+	taskRepo := repositories.NewTaskRepository(db)
+
+	// ==========================================
+	// Services
+	// ==========================================
+
+	jwtService := services.NewJWTService(cfg.JWTSecret)
+
+	userService := services.NewUserService(userRepo)
+
+	creatorService := services.NewCreatorService(
+		creatorRepo,
+	)
+
+	goalService := services.NewGoalService(
+		goalRepo,
+		creatorRepo,
+	)
+
+	taskService := services.NewTaskService(
+		taskRepo,
+		goalRepo,
+		creatorRepo,
+	)
+
+	// ==========================================
+	// Handlers
+	// ==========================================
+
+	authHandler := handlers.NewAuthHandler(
+		userService,
+		jwtService,
+	)
+
+	creatorHandler := handlers.NewCreatorHandler(
+		creatorService,
+	)
+
+	goalHandler := handlers.NewGoalHandler(
+		goalService,
+	)
+
+	taskHandler := handlers.NewTaskHandler(
+		taskService,
+	)
+
+	// ==========================================
 	// API v1
+	// ==========================================
+
 	api := router.Group("/api/v1")
+
+	// Public routes
+	auth := api.Group("/auth")
 	{
-		auth := api.Group("/auth")
-		{
-			auth.POST("/register", authHandler.Register)
-			// auth.POST("/login", authHandler.Login) // We'll add this next
-		}
+		auth.POST("/register", authHandler.Register)
+		auth.POST("/login", authHandler.Login)
+	}
+
+	// Protected routes
+	protected := api.Group("/")
+	protected.Use(middleware.AuthMiddleware(cfg.JWTSecret))
+	{
+		// Creator
+		protected.POST("/creator/profile", creatorHandler.Create)
+		protected.GET("/creator/profile", creatorHandler.Get)
+
+		// Goals
+		protected.POST("/goals", goalHandler.Create)
+		protected.GET("/goals", goalHandler.GetAll)
+
+		// Tasks
+		protected.POST("/goals/:goalID/tasks", taskHandler.Create)
+		protected.GET("/goals/:goalID/tasks", taskHandler.GetByGoal)
 	}
 
 	return router

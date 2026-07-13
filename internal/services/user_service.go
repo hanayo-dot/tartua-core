@@ -48,7 +48,6 @@ func (s *UserService) Register(req *models.RegisterRequest) error {
 		return err
 	}
 
-	// Create the user
 	user := &models.User{
 		Username:     req.Username,
 		Email:        req.Email,
@@ -58,4 +57,24 @@ func (s *UserService) Register(req *models.RegisterRequest) error {
 	}
 
 	return s.repo.Create(user)
+}
+
+func (s *UserService) Login(req *models.LoginRequest) (*models.User, error) {
+	user, err := s.repo.GetByEmail(req.Email)
+	if err != nil {
+		return nil, err
+	}
+
+	if user == nil {
+		return nil, errors.New("invalid email or password")
+	}
+
+	if err := bcrypt.CompareHashAndPassword(
+		[]byte(user.PasswordHash),
+		[]byte(req.Password),
+	); err != nil {
+		return nil, errors.New("invalid email or password")
+	}
+
+	return user, nil
 }

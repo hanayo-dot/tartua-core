@@ -31,7 +31,7 @@ func main() {
 	defer db.Close()
 
 	// Register application routes
-	router := routes.RegisterRoutes(db)
+	router := routes.RegisterRoutes(db, cfg)
 
 	log.Printf("Tartua API running on port %s", cfg.Port)
 
