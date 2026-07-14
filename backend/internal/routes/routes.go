@@ -37,6 +37,12 @@ func RegisterRoutes(db *sql.DB, cfg *config.Config) *gin.Engine {
 
 	jwtService := services.NewJWTService(cfg.JWTSecret)
 
+	aiService := services.NewAIService(
+		goalRepo,
+		taskRepo,
+		platformRepo,
+	)
+
 	userService := services.NewUserService(userRepo)
 
 	creatorService := services.NewCreatorService(
@@ -89,6 +95,9 @@ func RegisterRoutes(db *sql.DB, cfg *config.Config) *gin.Engine {
 	platformHandler := handlers.NewPlatformHandler(
 		platformService,
 	)
+	aiHandler := handlers.NewAIHandler(
+		aiService,
+	)
 
 	// ==========================================
 	// API v1
@@ -132,6 +141,8 @@ func RegisterRoutes(db *sql.DB, cfg *config.Config) *gin.Engine {
 		protected.GET("/platforms", platformHandler.GetAll)
 		protected.POST("/platforms/connect", platformHandler.Connect)
 		protected.DELETE("/platforms/:platform/disconnect", platformHandler.Disconnect)
+
+		protected.GET("/dashboard/insights", aiHandler.GetInsights)
 	}
 
 	return router
