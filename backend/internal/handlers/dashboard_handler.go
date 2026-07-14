@@ -1,8 +1,6 @@
 package handlers
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 
 	"github.com/hanayo-dot/tartua-core/internal/services"
@@ -22,15 +20,19 @@ func NewDashboardHandler(service *services.DashboardService) *DashboardHandler {
 func (h *DashboardHandler) Get(c *gin.Context) {
 	userID := c.GetString("userID")
 
-	stats, err := h.service.Get(userID)
-	if err != nil {
-		response.Error(c, http.StatusBadRequest, err.Error())
+	if userID == "" {
+		response.Unauthorized(c, "Unauthorized")
 		return
 	}
 
-	response.Success(
+	stats, err := h.service.Get(userID)
+	if err != nil {
+		response.BadRequest(c, err.Error())
+		return
+	}
+
+	response.OK(
 		c,
-		http.StatusOK,
 		"Dashboard retrieved successfully",
 		stats,
 	)

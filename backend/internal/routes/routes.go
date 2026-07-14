@@ -29,6 +29,7 @@ func RegisterRoutes(db *sql.DB, cfg *config.Config) *gin.Engine {
 	goalRepo := repositories.NewGoalRepository(db)
 	taskRepo := repositories.NewTaskRepository(db)
 	dashboardRepo := repositories.NewDashboardRepository(db)
+	platformRepo := repositories.NewPlatformRepository()
 
 	// ==========================================
 	// Services
@@ -57,6 +58,9 @@ func RegisterRoutes(db *sql.DB, cfg *config.Config) *gin.Engine {
 		dashboardRepo,
 		creatorRepo,
 	)
+	platformService := services.NewPlatformService(
+		platformRepo,
+	)
 
 	// ==========================================
 	// Handlers
@@ -81,6 +85,9 @@ func RegisterRoutes(db *sql.DB, cfg *config.Config) *gin.Engine {
 
 	dashboardHandler := handlers.NewDashboardHandler(
 		dashboardService,
+	)
+	platformHandler := handlers.NewPlatformHandler(
+		platformService,
 	)
 
 	// ==========================================
@@ -120,6 +127,11 @@ func RegisterRoutes(db *sql.DB, cfg *config.Config) *gin.Engine {
 		protected.GET("/goals/:goalID/tasks/:taskID", taskHandler.GetByID)
 		protected.PUT("/goals/:goalID/tasks/:taskID", taskHandler.Update)
 		protected.DELETE("/goals/:goalID/tasks/:taskID", taskHandler.Delete)
+
+		// Platforms
+		protected.GET("/platforms", platformHandler.GetAll)
+		protected.POST("/platforms/connect", platformHandler.Connect)
+		protected.DELETE("/platforms/:platform/disconnect", platformHandler.Disconnect)
 	}
 
 	return router

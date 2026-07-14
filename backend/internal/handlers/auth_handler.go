@@ -1,8 +1,6 @@
 package handlers
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 
 	"github.com/hanayo-dot/tartua-core/internal/models"
@@ -29,18 +27,17 @@ func (h *AuthHandler) Register(c *gin.Context) {
 	var req models.RegisterRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
-		response.Error(c, http.StatusBadRequest, err.Error())
+		response.BadRequest(c, err.Error())
 		return
 	}
 
 	if err := h.userService.Register(&req); err != nil {
-		response.Error(c, http.StatusConflict, err.Error())
+		response.Conflict(c, err.Error())
 		return
 	}
 
-	response.Success(
+	response.Created(
 		c,
-		http.StatusCreated,
 		"User registered successfully",
 		nil,
 	)
@@ -50,25 +47,24 @@ func (h *AuthHandler) Login(c *gin.Context) {
 	var req models.LoginRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
-		response.Error(c, http.StatusBadRequest, err.Error())
+		response.BadRequest(c, err.Error())
 		return
 	}
 
 	user, err := h.userService.Login(&req)
 	if err != nil {
-		response.Error(c, http.StatusUnauthorized, err.Error())
+		response.Unauthorized(c, err.Error())
 		return
 	}
 
 	token, err := h.jwtService.GenerateToken(user.ID, user.Email)
 	if err != nil {
-		response.Error(c, http.StatusInternalServerError, "failed to generate token")
+		response.InternalServerError(c)
 		return
 	}
 
-	response.Success(
+	response.OK(
 		c,
-		http.StatusOK,
 		"Login successful",
 		models.LoginResponse{
 			Token: token,

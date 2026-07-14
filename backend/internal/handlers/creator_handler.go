@@ -1,12 +1,11 @@
 package handlers
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 
 	"github.com/hanayo-dot/tartua-core/internal/models"
 	"github.com/hanayo-dot/tartua-core/internal/services"
+	"github.com/hanayo-dot/tartua-core/pkg/response"
 )
 
 type CreatorHandler struct {
@@ -23,57 +22,49 @@ func (h *CreatorHandler) Create(c *gin.Context) {
 	var req models.CreateCreatorRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
+		response.BadRequest(c, err.Error())
 		return
 	}
 
 	userID := c.GetString("userID")
-
 	if userID == "" {
-		c.JSON(http.StatusUnauthorized, gin.H{
-			"error": "unauthorized",
-		})
+		response.Unauthorized(c, "Unauthorized")
 		return
 	}
 
 	if err := h.service.Create(userID, &req); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
+		response.InternalServerError(c)
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{
-		"message": "Creator profile created successfully",
-	})
+	response.Created(
+		c,
+		"Creator profile created successfully",
+		nil,
+	)
 }
 
 func (h *CreatorHandler) Get(c *gin.Context) {
 	userID := c.GetString("userID")
-
 	if userID == "" {
-		c.JSON(http.StatusUnauthorized, gin.H{
-			"error": "unauthorized",
-		})
+		response.Unauthorized(c, "Unauthorized")
 		return
 	}
 
 	creator, err := h.service.Get(userID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
+		response.InternalServerError(c)
 		return
 	}
 
 	if creator == nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"error": "creator profile not found",
-		})
+		response.NotFound(c, "Creator profile not found")
 		return
 	}
 
-	c.JSON(http.StatusOK, creator)
+	response.OK(
+		c,
+		"Creator profile retrieved successfully",
+		creator,
+	)
 }
