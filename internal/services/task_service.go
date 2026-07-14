@@ -60,6 +60,71 @@ func (s *TaskService) Create(userID, goalID string, req *models.CreateTaskReques
 }
 
 func (s *TaskService) GetByGoal(userID, goalID string) ([]models.Task, error) {
+	_, err := s.GetGoal(userID, goalID)
+	if err != nil {
+		return nil, err
+	}
+
+	return s.taskRepo.GetByGoalID(goalID)
+}
+
+func (s *TaskService) GetByID(userID, goalID, taskID string) (*models.Task, error) {
+	_, err := s.GetGoal(userID, goalID)
+	if err != nil {
+		return nil, err
+	}
+
+	task, err := s.taskRepo.GetByID(taskID)
+	if err != nil {
+		return nil, err
+	}
+
+	if task == nil {
+		return nil, errors.New("task not found")
+	}
+
+	if task.GoalID != goalID {
+		return nil, errors.New("task does not belong to this goal")
+	}
+
+	return task, nil
+}
+
+func (s *TaskService) Update(userID, goalID, taskID string, req *models.UpdateTaskRequest) error {
+	task, err := s.GetByID(userID, goalID, taskID)
+	if err != nil {
+		return err
+	}
+
+	if req.Title != "" {
+		task.Title = req.Title
+	}
+
+	if req.Description != "" {
+		task.Description = req.Description
+	}
+
+	if req.Status != "" {
+		task.Status = req.Status
+	}
+
+	if !req.DueDate.IsZero() {
+		task.DueDate = req.DueDate
+	}
+
+	return s.taskRepo.Update(task)
+}
+
+func (s *TaskService) Delete(userID, goalID, taskID string) error {
+	_, err := s.GetByID(userID, goalID, taskID)
+	if err != nil {
+		return err
+	}
+
+	return s.taskRepo.Delete(taskID)
+}
+
+func (s *TaskService) GetGoal(userID, goalID string) (*models.Goal, error) {
 	creator, err := s.creatorRepo.GetByUserID(userID)
 	if err != nil {
 		return nil, err
@@ -82,5 +147,5 @@ func (s *TaskService) GetByGoal(userID, goalID string) ([]models.Task, error) {
 		return nil, errors.New("unauthorized")
 	}
 
-	return s.taskRepo.GetByGoalID(goalID)
+	return goal, nil
 }

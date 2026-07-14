@@ -24,3 +24,11 @@ type CreateGoalRequest struct {
 	Priority    string    `json:"priority"`
 	TargetDate  time.Time `json:"target_date"`
 }
+
+type UpdateGoalRequest struct {
+	Title       string    `json:"title"`
+	Description string    `json:"description"`
+	Status      string    `json:"status"`
+	Priority    string    `json:"priority"`
+	TargetDate  time.Time `json:"target_date"`
+}
