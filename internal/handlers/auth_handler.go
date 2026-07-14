@@ -7,6 +7,7 @@ import (
 
 	"github.com/hanayo-dot/tartua-core/internal/models"
 	"github.com/hanayo-dot/tartua-core/internal/services"
+	"github.com/hanayo-dot/tartua-core/pkg/response"
 )
 
 type AuthHandler struct {
@@ -28,52 +29,50 @@ func (h *AuthHandler) Register(c *gin.Context) {
 	var req models.RegisterRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
+		response.Error(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	if err := h.userService.Register(&req); err != nil {
-		c.JSON(http.StatusConflict, gin.H{
-			"error": err.Error(),
-		})
+		response.Error(c, http.StatusConflict, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{
-		"message": "User registered successfully",
-	})
+	response.Success(
+		c,
+		http.StatusCreated,
+		"User registered successfully",
+		nil,
+	)
 }
 
 func (h *AuthHandler) Login(c *gin.Context) {
 	var req models.LoginRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
+		response.Error(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	user, err := h.userService.Login(&req)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{
-			"error": err.Error(),
-		})
+		response.Error(c, http.StatusUnauthorized, err.Error())
 		return
 	}
 
 	token, err := h.jwtService.GenerateToken(user.ID, user.Email)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "failed to generate token",
-		})
+		response.Error(c, http.StatusInternalServerError, "failed to generate token")
 		return
 	}
 
-	c.JSON(http.StatusOK, models.LoginResponse{
-		Token: token,
-		User:  *user,
-	})
+	response.Success(
+		c,
+		http.StatusOK,
+		"Login successful",
+		models.LoginResponse{
+			Token: token,
+			User:  *user,
+		},
+	)
 }

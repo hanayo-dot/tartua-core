@@ -141,3 +141,37 @@ func (r *GoalRepository) GetByID(id string) (*models.Goal, error) {
 
 	return &goal, nil
 }
+
+func (r *GoalRepository) Update(goal *models.Goal) error {
+	query := `
+		UPDATE goals
+		SET
+			title = $1,
+			description = $2,
+			status = $3,
+			priority = $4,
+			target_date = $5,
+			updated_at = CURRENT_TIMESTAMP
+		WHERE id = $6
+	`
+
+	_, err := r.db.Exec(
+		query,
+		goal.Title,
+		goal.Description,
+		goal.Status,
+		goal.Priority,
+		goal.TargetDate,
+		goal.ID,
+	)
+
+	return err
+}
+
+func (r *GoalRepository) Delete(id string) error {
+	query := `DELETE FROM goals WHERE id = $1`
+
+	_, err := r.db.Exec(query, id)
+
+	return err
+}

@@ -28,6 +28,7 @@ func RegisterRoutes(db *sql.DB, cfg *config.Config) *gin.Engine {
 	creatorRepo := repositories.NewCreatorRepository(db)
 	goalRepo := repositories.NewGoalRepository(db)
 	taskRepo := repositories.NewTaskRepository(db)
+	dashboardRepo := repositories.NewDashboardRepository(db)
 
 	// ==========================================
 	// Services
@@ -52,6 +53,11 @@ func RegisterRoutes(db *sql.DB, cfg *config.Config) *gin.Engine {
 		creatorRepo,
 	)
 
+	dashboardService := services.NewDashboardService(
+		dashboardRepo,
+		creatorRepo,
+	)
+
 	// ==========================================
 	// Handlers
 	// ==========================================
@@ -71,6 +77,10 @@ func RegisterRoutes(db *sql.DB, cfg *config.Config) *gin.Engine {
 
 	taskHandler := handlers.NewTaskHandler(
 		taskService,
+	)
+
+	dashboardHandler := handlers.NewDashboardHandler(
+		dashboardService,
 	)
 
 	// ==========================================
@@ -94,13 +104,22 @@ func RegisterRoutes(db *sql.DB, cfg *config.Config) *gin.Engine {
 		protected.POST("/creator/profile", creatorHandler.Create)
 		protected.GET("/creator/profile", creatorHandler.Get)
 
+		// Dashboard
+		protected.GET("/dashboard", dashboardHandler.Get)
+
 		// Goals
 		protected.POST("/goals", goalHandler.Create)
 		protected.GET("/goals", goalHandler.GetAll)
+		protected.GET("/goals/:goalID", goalHandler.GetByID)
+		protected.PUT("/goals/:goalID", goalHandler.Update)
+		protected.DELETE("/goals/:goalID", goalHandler.Delete)
 
 		// Tasks
 		protected.POST("/goals/:goalID/tasks", taskHandler.Create)
 		protected.GET("/goals/:goalID/tasks", taskHandler.GetByGoal)
+		protected.GET("/goals/:goalID/tasks/:taskID", taskHandler.GetByID)
+		protected.PUT("/goals/:goalID/tasks/:taskID", taskHandler.Update)
+		protected.DELETE("/goals/:goalID/tasks/:taskID", taskHandler.Delete)
 	}
 
 	return router

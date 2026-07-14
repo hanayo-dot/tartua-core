@@ -7,6 +7,7 @@ import (
 
 	"github.com/hanayo-dot/tartua-core/internal/models"
 	"github.com/hanayo-dot/tartua-core/internal/services"
+	"github.com/hanayo-dot/tartua-core/pkg/response"
 )
 
 type TaskHandler struct {
@@ -23,9 +24,7 @@ func (h *TaskHandler) Create(c *gin.Context) {
 	var req models.CreateTaskRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
+		response.Error(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -33,15 +32,11 @@ func (h *TaskHandler) Create(c *gin.Context) {
 	goalID := c.Param("goalID")
 
 	if err := h.service.Create(userID, goalID, &req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
+		response.Error(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{
-		"message": "Task created successfully",
-	})
+	response.Success(c, http.StatusCreated, "Task created successfully", nil)
 }
 
 func (h *TaskHandler) GetByGoal(c *gin.Context) {
@@ -50,11 +45,56 @@ func (h *TaskHandler) GetByGoal(c *gin.Context) {
 
 	tasks, err := h.service.GetByGoal(userID, goalID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
+		response.Error(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, tasks)
+	response.Success(c, http.StatusOK, "Tasks retrieved successfully", tasks)
+}
+
+func (h *TaskHandler) GetByID(c *gin.Context) {
+	userID := c.GetString("userID")
+	goalID := c.Param("goalID")
+	taskID := c.Param("taskID")
+
+	task, err := h.service.GetByID(userID, goalID, taskID)
+	if err != nil {
+		response.Error(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	response.Success(c, http.StatusOK, "Task retrieved successfully", task)
+}
+
+func (h *TaskHandler) Update(c *gin.Context) {
+	var req models.UpdateTaskRequest
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		response.Error(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	userID := c.GetString("userID")
+	goalID := c.Param("goalID")
+	taskID := c.Param("taskID")
+
+	if err := h.service.Update(userID, goalID, taskID, &req); err != nil {
+		response.Error(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	response.Success(c, http.StatusOK, "Task updated successfully", nil)
+}
+
+func (h *TaskHandler) Delete(c *gin.Context) {
+	userID := c.GetString("userID")
+	goalID := c.Param("goalID")
+	taskID := c.Param("taskID")
+
+	if err := h.service.Delete(userID, goalID, taskID); err != nil {
+		response.Error(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	response.Success(c, http.StatusOK, "Task deleted successfully", nil)
 }
