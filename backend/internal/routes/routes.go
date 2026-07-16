@@ -15,6 +15,7 @@ import (
 
 func RegisterRoutes(db *sql.DB, cfg *config.Config) *gin.Engine {
 	router := gin.Default()
+	router.Use(middleware.CORSMiddleware())
 
 	// Public routes
 	router.GET("/", Home)
