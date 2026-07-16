@@ -360,7 +360,7 @@ body[data-theme='executive'] .card {
 .stat-value {
   font-size: 2.5rem;
   font-weight: 900;
-  color: #2950a9;
+  color: var(--accent-strong);
   margin: 10px 0;
 }
 
@@ -376,18 +376,18 @@ body[data-theme='executive'] .card {
 }
 
 .badge.productivity {
-  background: linear-gradient(135deg, #e0f2fe, #c4b5fd);
-  color: #4c1d95;
+  background: linear-gradient(135deg, #dbeafe, #c7d2fe);
+  color: #0f172a;
 }
 
 .badge.platform {
-  background: linear-gradient(135deg, #fef3c7, #fbcfe8);
-  color: #9a5c00;
+  background: linear-gradient(135deg, #fdf2f8, #f5d0fe);
+  color: #6b21a8;
 }
 
 .badge.goal {
-  background: linear-gradient(135deg, #dcfce7, #99f6e4);
-  color: #0f766e;
+  background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+  color: #14532d;
 }
 
 .button {

@@ -17,18 +17,28 @@ import './index.css';
 
 const ProtectedLayout = ({ children }: { children: ReactNode }) => {
   const { logout, user } = useAuthContext();
-  const [theme, setTheme] = useState<'aurora' | 'gallery' | 'executive'>('executive');
+  const [theme, setTheme] = useState<'aurora' | 'gallery' | 'executive' | null>(null);
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('tartua-theme') as 'aurora' | 'gallery' | 'executive' | null;
-    const nextTheme = savedTheme ?? 'executive';
+    const nextTheme = savedTheme ?? null;
     setTheme(nextTheme);
-    document.body.dataset.theme = nextTheme;
+
+    if (nextTheme) {
+      document.body.dataset.theme = nextTheme;
+    } else {
+      document.body.removeAttribute('data-theme');
+    }
   }, []);
 
   useEffect(() => {
-    document.body.dataset.theme = theme;
-    localStorage.setItem('tartua-theme', theme);
+    if (theme) {
+      document.body.dataset.theme = theme;
+      localStorage.setItem('tartua-theme', theme);
+    } else {
+      document.body.removeAttribute('data-theme');
+      localStorage.removeItem('tartua-theme');
+    }
   }, [theme]);
 
   const nextThemeLabel = useMemo(() => {
@@ -57,7 +67,7 @@ const ProtectedLayout = ({ children }: { children: ReactNode }) => {
           <Link to="/profile">Profile</Link>
         </nav>
 
-        <button className="button secondary" style={{ marginTop: 24, width: '100%', justifyContent: 'center' }} onClick={() => setTheme((current) => (current === 'aurora' ? 'gallery' : current === 'gallery' ? 'executive' : 'aurora'))}>
+        <button className="button secondary" style={{ marginTop: 24, width: '100%', justifyContent: 'center' }} onClick={() => setTheme((current) => (current === 'aurora' ? 'gallery' : current === 'gallery' ? 'executive' : current === 'executive' ? 'aurora' : 'gallery'))}>
           <Palette size={16} style={{ marginRight: 8 }} />
           {nextThemeLabel}
         </button>

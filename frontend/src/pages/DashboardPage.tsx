@@ -1,5 +1,16 @@
 import { useEffect, useState } from 'react';
-import { Goal, LayoutGrid, ListTodo, Sparkles, Target } from 'lucide-react';
+import {
+  Camera,
+  Globe2,
+  Goal,
+  LayoutGrid,
+  ListTodo,
+  Music2,
+  Play,
+  Sparkles,
+  Target,
+  Tv,
+} from 'lucide-react';
 import InsightCard from '../components/InsightCard';
 import StatCard from '../components/StatCard';
 import GoalCard from '../components/GoalCard';
@@ -13,6 +24,14 @@ export default function DashboardPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [platforms, setPlatforms] = useState<Platform[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const getPlatformIcon = (name: string) => {
+    if (name.includes('YouTube')) return Play;
+    if (name.includes('TikTok')) return Music2;
+    if (name.includes('Instagram')) return Camera;
+    if (name.includes('Twitch')) return Tv;
+    return Globe2;
+  };
 
   useEffect(() => {
     async function loadDashboard() {
@@ -165,37 +184,51 @@ export default function DashboardPage() {
       <section style={{ marginTop: 32 }}>
         <h2 className="section-title" style={{ display: 'flex', alignItems: 'center', gap: 10 }}><LayoutGrid size={18} /> Connected Platforms</h2>
         <div className="grid grid-3" style={{ marginTop: 12 }}>
-          {platforms.map((platform) => (
-            <div key={platform.id} className="card" style={{ position: 'relative' }}>
-              {platform.connected && (
-                <div style={{ position: 'absolute', top: 12, right: 12, width: 12, height: 12, background: '#10b981', borderRadius: '50%' }} />
-              )}
-              <div style={{ fontSize: '2rem', marginBottom: 12 }}>
-                {platform.name.includes('YouTube') && '▶️'}
-                {platform.name.includes('TikTok') && '🎵'}
-                {platform.name.includes('Instagram') && '📷'}
-              </div>
-              <h3 style={{ margin: '0 0 4px 0' }}>{platform.name}</h3>
-              <p style={{ margin: '0 0 12px 0', color: '#64748b', fontSize: '0.9rem' }}>
-                @{platform.username}
-              </p>
-              {platform.connected && (
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, paddingTop: 12, borderTop: '1px solid #e2e8f0' }}>
-                  <div>
-                    <div style={{ fontSize: '0.8rem', color: '#64748b', marginBottom: 4 }}>Followers</div>
-                    <div style={{ fontSize: '1.25rem', fontWeight: 700 }}>{platform.followers.toLocaleString()}</div>
-                  </div>
-                  <div>
-                    <div style={{ fontSize: '0.8rem', color: '#64748b', marginBottom: 4 }}>Engagement</div>
-                    <div style={{ fontSize: '1.25rem', fontWeight: 700 }}>{platform.engagement.toFixed(1)}%</div>
-                  </div>
+          {platforms.map((platform) => {
+            const PlatformIcon = getPlatformIcon(platform.name);
+
+            return (
+              <div key={platform.id} className="card" style={{ position: 'relative' }}>
+                {platform.connected && (
+                  <div style={{ position: 'absolute', top: 12, right: 12, width: 12, height: 12, background: '#10b981', borderRadius: '50%' }} />
+                )}
+                <div
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: 56,
+                    height: 56,
+                    borderRadius: 18,
+                    marginBottom: 12,
+                    background: 'linear-gradient(135deg, #e0e7ff 0%, #dbeafe 100%)',
+                    color: '#1d4ed8',
+                  }}
+                >
+                  <PlatformIcon size={26} strokeWidth={2.1} />
                 </div>
-              )}
-              <button className={platform.connected ? 'button secondary' : 'button primary'} style={{ width: '100%', marginTop: 12 }}>
-                {platform.connected ? '🔗 Connected' : '+ Connect'}
-              </button>
-            </div>
-          ))}
+                <h3 style={{ margin: '0 0 4px 0', color: 'var(--text)' }}>{platform.name}</h3>
+                <p style={{ margin: '0 0 12px 0', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+                  @{platform.username}
+                </p>
+                {platform.connected && (
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, paddingTop: 12, borderTop: '1px solid var(--border)' }}>
+                    <div>
+                      <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: 4 }}>Followers</div>
+                      <div style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text)' }}>{platform.followers.toLocaleString()}</div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: 4 }}>Engagement</div>
+                      <div style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text)' }}>{platform.engagement.toFixed(1)}%</div>
+                    </div>
+                  </div>
+                )}
+                <button className={platform.connected ? 'button secondary' : 'button primary'} style={{ width: '100%', marginTop: 12 }}>
+                  {platform.connected ? '🔗 Connected' : '+ Connect'}
+                </button>
+              </div>
+            );
+          })}
         </div>
       </section>
     </div>
