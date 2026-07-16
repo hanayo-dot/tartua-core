@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { BarChart3, Brain, TrendingUp, CheckCircle, Target, Play, Smartphone } from 'lucide-react';
 import InsightCard from '../components/InsightCard';
 import StatCard from '../components/StatCard';
 import GoalCard from '../components/GoalCard';
@@ -61,7 +62,10 @@ export default function DashboardPage() {
   if (loading) {
     return (
       <div style={{ padding: '40px' }}>
-        <div style={{ fontSize: '1.5rem', color: '#64748b' }}>📊 Loading your dashboard...</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, color: '#64748b' }}>
+          <BarChart3 size={20} />
+          <span>Loading your dashboard...</span>
+        </div>
       </div>
     );
   }
@@ -97,7 +101,10 @@ export default function DashboardPage() {
 
       {/* Insights Section */}
       <section style={{ marginBottom: 32 }}>
-        <h2 className="section-title">🤖 AI Insights & Recommendations</h2>
+        <h2 className="section-title" style={{ display: 'flex', alignItems: 'center', gap: 8, margin: 0 }}>
+          <Brain size={24} />
+          AI Insights & Recommendations
+        </h2>
         <div className="grid grid-3" style={{ marginTop: 12 }}>
           {insights.map((insight) => (
             <InsightCard key={insight.title} insight={insight} />
@@ -109,7 +116,10 @@ export default function DashboardPage() {
       <section className="grid grid-2" style={{ gap: 24 }}>
         {/* Goals */}
         <div>
-          <h2 className="section-title">📈 Goal Progress</h2>
+          <h2 className="section-title" style={{ display: 'flex', alignItems: 'center', gap: 8, margin: 0 }}>
+            <TrendingUp size={24} />
+            Goal Progress
+          </h2>
           {goals.length > 0 ? (
             <div className="list-card" style={{ marginTop: 12 }}>
               {goals.slice(0, 3).map((goal) => (
@@ -123,7 +133,9 @@ export default function DashboardPage() {
             </div>
           ) : (
             <div className="card" style={{ textAlign: 'center', padding: '40px' }}>
-              <div style={{ fontSize: '2rem', marginBottom: 12 }}>🎯</div>
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 12 }}>
+                <Target size={40} strokeWidth={1.5} color="#94a3b8" />
+              </div>
               <p style={{ margin: '0 0 12px 0', color: '#1a202c' }}>No goals yet</p>
               <p style={{ margin: 0, color: '#64748b' }}>Create your first goal to get started</p>
             </div>
@@ -132,7 +144,10 @@ export default function DashboardPage() {
 
         {/* Tasks */}
         <div>
-          <h2 className="section-title">✅ Recent Tasks</h2>
+          <h2 className="section-title" style={{ display: 'flex', alignItems: 'center', gap: 8, margin: 0 }}>
+            <CheckCircle size={24} />
+            Recent Tasks
+          </h2>
           {tasks.length > 0 ? (
             <div className="list-card" style={{ marginTop: 12 }}>
               {tasks.slice(0, 3).map((task) => (
@@ -146,7 +161,9 @@ export default function DashboardPage() {
             </div>
           ) : (
             <div className="card" style={{ textAlign: 'center', padding: '40px' }}>
-              <div style={{ fontSize: '2rem', marginBottom: 12 }}>✓</div>
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 12 }}>
+                <CheckCircle size={40} strokeWidth={1.5} color="#94a3b8" />
+              </div>
               <p style={{ margin: '0 0 12px 0', color: '#1a202c' }}>No tasks yet</p>
               <p style={{ margin: 0, color: '#64748b' }}>Create tasks to track your progress</p>
             </div>
@@ -156,17 +173,20 @@ export default function DashboardPage() {
 
       {/* Platforms Section */}
       <section style={{ marginTop: 32 }}>
-        <h2 className="section-title">📱 Connected Platforms</h2>
+        <h2 className="section-title" style={{ display: 'flex', alignItems: 'center', gap: 8, margin: 0 }}>
+          <Smartphone size={24} />
+          Connected Platforms
+        </h2>
         <div className="grid grid-3" style={{ marginTop: 12 }}>
           {platforms.map((platform) => (
             <div key={platform.id} className="card" style={{ position: 'relative' }}>
               {platform.connected && (
                 <div style={{ position: 'absolute', top: 12, right: 12, width: 12, height: 12, background: '#10b981', borderRadius: '50%' }} />
               )}
-              <div style={{ fontSize: '2rem', marginBottom: 12 }}>
-                {platform.name.includes('YouTube') && '▶️'}
-                {platform.name.includes('TikTok') && '🎵'}
-                {platform.name.includes('Instagram') && '📷'}
+              <div style={{ color: '#64748b', marginBottom: 12 }}>
+                {platform.name.includes('YouTube') && <Play size={28} strokeWidth={1.5} />}
+                {platform.name.includes('TikTok') && <Smartphone size={28} strokeWidth={1.5} />}
+                {platform.name.includes('Instagram') && <Smartphone size={28} strokeWidth={1.5} />}
               </div>
               <h3 style={{ margin: '0 0 4px 0' }}>{platform.name}</h3>
               <p style={{ margin: '0 0 12px 0', color: '#64748b', fontSize: '0.9rem' }}>

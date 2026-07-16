@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { Sparkles, Target, CheckCircle, Brain, Smartphone, TrendingUp, Lock } from 'lucide-react';
 import Logo from '../components/Logo';
 
 export default function LandingPage() {
@@ -38,8 +39,9 @@ export default function LandingPage() {
               Sign in
             </Link>
           </div>
-          <p style={{ fontSize: '0.95rem', color: '#64748b', margin: 0 }}>
-            ✨ Join 500+ creators already building with Tartua
+          <p style={{ fontSize: '0.95rem', color: '#64748b', margin: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+            <Sparkles size={16} />
+            Join 500+ creators already building with Tartua
           </p>
         </div>
         <div className="hero-image" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 200 }}>
@@ -58,7 +60,9 @@ export default function LandingPage() {
 
         <div className="features-grid" style={{ gridTemplateColumns: 'repeat(2, 1fr)', marginBottom: 40 }}>
           <div className="feature-item">
-            <div className="feature-icon">🎯</div>
+            <div className="feature-icon" style={{ color: '#22c55e' }}>
+              <Target size={32} strokeWidth={1.5} />
+            </div>
             <div className="feature-content">
               <h3>Goal Tracking</h3>
               <p>Set, track, and achieve your creator goals with real-time progress monitoring.</p>
@@ -66,7 +70,9 @@ export default function LandingPage() {
           </div>
 
           <div className="feature-item">
-            <div className="feature-icon">✅</div>
+            <div className="feature-icon" style={{ color: '#3b82f6' }}>
+              <CheckCircle size={32} strokeWidth={1.5} />
+            </div>
             <div className="feature-content">
               <h3>Task Management</h3>
               <p>Break down goals into actionable tasks and stay organized with smart categorization.</p>
@@ -74,7 +80,9 @@ export default function LandingPage() {
           </div>
 
           <div className="feature-item">
-            <div className="feature-icon">🤖</div>
+            <div className="feature-icon" style={{ color: '#a855f7' }}>
+              <Brain size={32} strokeWidth={1.5} />
+            </div>
             <div className="feature-content">
               <h3>AI Insights</h3>
               <p>Get intelligent recommendations and insights powered by advanced AI analysis.</p>
@@ -82,7 +90,9 @@ export default function LandingPage() {
           </div>
 
           <div className="feature-item">
-            <div className="feature-icon">📱</div>
+            <div className="feature-icon" style={{ color: '#f59e0b' }}>
+              <Smartphone size={32} strokeWidth={1.5} />
+            </div>
             <div className="feature-content">
               <h3>Platform Sync</h3>
               <p>Connect YouTube, TikTok, and Instagram to track performance in one place.</p>
@@ -90,7 +100,9 @@ export default function LandingPage() {
           </div>
 
           <div className="feature-item">
-            <div className="feature-icon">📈</div>
+            <div className="feature-icon" style={{ color: '#ec4899' }}>
+              <TrendingUp size={32} strokeWidth={1.5} />
+            </div>
             <div className="feature-content">
               <h3>Analytics</h3>
               <p>Visualize your progress with beautiful charts and actionable metrics.</p>
@@ -98,7 +110,9 @@ export default function LandingPage() {
           </div>
 
           <div className="feature-item">
-            <div className="feature-icon">🔒</div>
+            <div className="feature-icon" style={{ color: '#06b6d4' }}>
+              <Lock size={32} strokeWidth={1.5} />
+            </div>
             <div className="feature-content">
               <h3>Secure & Private</h3>
               <p>Your data is encrypted and protected with industry-standard security.</p>

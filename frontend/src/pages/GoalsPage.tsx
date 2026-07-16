@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { TrendingUp, Target } from 'lucide-react';
 import GoalCard from '../components/GoalCard';
 import { api } from '../api/api';
 import { Goal } from '../types';
@@ -42,7 +43,10 @@ export default function GoalsPage() {
   if (loading) {
     return (
       <div style={{ padding: '40px' }}>
-        <div style={{ fontSize: '1.5rem', color: '#64748b' }}>📈 Loading your goals...</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, color: '#64748b' }}>
+          <TrendingUp size={20} />
+          <span>Loading your goals...</span>
+        </div>
       </div>
     );
   }
@@ -67,7 +71,9 @@ export default function GoalsPage() {
         </div>
       ) : (
         <div className="card" style={{ textAlign: 'center', padding: '60px 40px' }}>
-          <div style={{ fontSize: '3rem', marginBottom: 16 }}>🎯</div>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
+            <Target size={48} strokeWidth={1.5} color="#94a3b8" />
+          </div>
           <h2 style={{ margin: '0 0 12px 0', color: '#1a202c' }}>No goals yet</h2>
           <p style={{ margin: '0 0 24px 0', color: '#64748b' }}>
             Create your first goal to start tracking your creator journey

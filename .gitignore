@@ -3,3 +3,6 @@ migrate
 
 # Optional
 bin/
+
+# Node modules
+node_modules/
