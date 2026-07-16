@@ -1,4 +1,4 @@
-import { Goal, Insight, Platform, Task, User } from '../types';
+import { CreatorProfile, Goal, Insight, Platform, Task, User } from '../types';
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? '/api/v1';
 let authToken: string | null = null;
@@ -19,6 +19,27 @@ export interface RegisterRequest {
   password: string;
   first_name?: string;
   last_name?: string;
+}
+
+export interface SaveCreatorProfileRequest {
+  display_name: string;
+  bio: string;
+  country?: string;
+  primary_platform?: string;
+  niche: string;
+  avatar_url?: string;
+}
+
+export interface CreateGoalRequest {
+  title: string;
+  description?: string;
+  priority?: string;
+  target_date?: string;
+}
+
+export interface ConnectPlatformRequest {
+  name: string;
+  username: string;
 }
 
 export function setAuthToken(token: string | null) {
@@ -69,8 +90,37 @@ export const api = {
     method: 'POST',
     body: JSON.stringify(payload),
   }),
+  getCreatorProfile: () => request<CreatorProfile>('/creator/profile'),
+  saveCreatorProfile: async (payload: SaveCreatorProfileRequest) => {
+    try {
+      return await request<CreatorProfile>('/creator/profile', {
+        method: 'PUT',
+        body: JSON.stringify(payload),
+      });
+    } catch (error) {
+      const err = error as Error;
+      if (err.message.startsWith('404')) {
+        return request<CreatorProfile>('/creator/profile', {
+          method: 'POST',
+          body: JSON.stringify(payload),
+        });
+      }
+      throw error;
+    }
+  },
   getInsights: () => request<Insight[]>('/dashboard/insights'),
+  createGoal: (payload: CreateGoalRequest) => request<null>('/goals', {
+    method: 'POST',
+    body: JSON.stringify({
+      ...payload,
+      target_date: payload.target_date ? new Date(payload.target_date).toISOString() : undefined,
+    }),
+  }),
   getGoals: () => request<Goal[]>('/goals'),
   getTasks: (goalId: string) => request<Task[]>(`/goals/${goalId}/tasks`),
   getPlatforms: () => request<Platform[]>('/platforms'),
+  connectPlatform: (payload: ConnectPlatformRequest) => request<null>('/platforms/connect', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  }),
 };

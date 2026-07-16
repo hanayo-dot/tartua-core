@@ -1,5 +1,6 @@
-import { ReactNode } from 'react';
+import { ReactNode, useEffect, useMemo, useState } from 'react';
 import { Routes, Route, Navigate, Link } from 'react-router-dom';
+import { Palette } from 'lucide-react';
 import DashboardPage from './pages/DashboardPage';
 import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
@@ -8,28 +9,60 @@ import GoalsPage from './pages/GoalsPage';
 import GoalDetailPage from './pages/GoalDetailPage';
 import CreatorProfilePage from './pages/CreatorProfilePage';
 import PlatformsPage from './pages/PlatformsPage';
+import AnalyticsPage from './pages/AnalyticsPage';
+import PlannerPage from './pages/PlannerPage';
 import Logo from './components/Logo';
 import { AuthProvider, useAuthContext } from './contexts/AuthContext';
 import './index.css';
 
 const ProtectedLayout = ({ children }: { children: ReactNode }) => {
   const { logout, user } = useAuthContext();
+  const [theme, setTheme] = useState<'aurora' | 'gallery' | 'executive'>('executive');
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('tartua-theme') as 'aurora' | 'gallery' | 'executive' | null;
+    const nextTheme = savedTheme ?? 'executive';
+    setTheme(nextTheme);
+    document.body.dataset.theme = nextTheme;
+  }, []);
+
+  useEffect(() => {
+    document.body.dataset.theme = theme;
+    localStorage.setItem('tartua-theme', theme);
+  }, [theme]);
+
+  const nextThemeLabel = useMemo(() => {
+    if (theme === 'aurora') return 'Switch to Gallery';
+    if (theme === 'gallery') return 'Switch to Executive';
+    return 'Switch to Aurora';
+  }, [theme]);
 
   return (
     <div className="app-shell">
       <aside className="sidebar">
-        <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 8, marginBottom: 32 }}>
-          <Logo size="small" />
-          <span style={{ fontWeight: 700, fontSize: '1.1rem', color: '#1a202c' }}>Tartua</span>
-        </Link>
-        <div style={{ marginBottom: 24, color: '#94a3b8' }}>{user?.username ?? 'Creator'}</div>
+        <div className="sidebar-crest">
+          <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 10 }}>
+            <Logo size="small" />
+            <span style={{ fontWeight: 800, fontSize: '1.1rem', color: '#f8fafc' }}>Tartua</span>
+          </Link>
+          <div className="brand-chip">{user?.username ?? 'Creator'}</div>
+        </div>
+
         <nav>
           <Link to="/dashboard">Dashboard</Link>
           <Link to="/goals">Goals</Link>
           <Link to="/platforms">Platforms</Link>
+          <Link to="/analytics">Analytics</Link>
+          <Link to="/planner">AI Planner</Link>
           <Link to="/profile">Profile</Link>
         </nav>
-        <button className="button secondary" style={{ marginTop: 24, width: '100%' }} onClick={logout}>
+
+        <button className="button secondary" style={{ marginTop: 24, width: '100%', justifyContent: 'center' }} onClick={() => setTheme((current) => (current === 'aurora' ? 'gallery' : current === 'gallery' ? 'executive' : 'aurora'))}>
+          <Palette size={16} style={{ marginRight: 8 }} />
+          {nextThemeLabel}
+        </button>
+
+        <button className="button secondary" style={{ marginTop: 12, width: '100%' }} onClick={logout}>
           Sign out
         </button>
       </aside>
@@ -59,6 +92,8 @@ function App() {
         <Route path="/goals" element={<ProtectedRoute><GoalsPage /></ProtectedRoute>} />
         <Route path="/goals/:goalId" element={<ProtectedRoute><GoalDetailPage /></ProtectedRoute>} />
         <Route path="/platforms" element={<ProtectedRoute><PlatformsPage /></ProtectedRoute>} />
+        <Route path="/analytics" element={<ProtectedRoute><AnalyticsPage /></ProtectedRoute>} />
+        <Route path="/planner" element={<ProtectedRoute><PlannerPage /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><CreatorProfilePage /></ProtectedRoute>} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>

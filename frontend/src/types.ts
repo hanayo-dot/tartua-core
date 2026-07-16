@@ -6,12 +6,26 @@ export interface Insight {
   type: InsightType;
 }
 
+export interface CreatorProfile {
+  id?: string;
+  display_name: string;
+  bio: string;
+  country?: string;
+  primary_platform?: string;
+  niche: string;
+  avatar_url?: string;
+}
+
 export interface Goal {
   id: string;
   title: string;
-  dueDate: string;
-  progress: number;
-  status: 'on track' | 'at risk' | 'complete';
+  description?: string;
+  dueDate?: string;
+  targetDate?: string;
+  progress?: number;
+  status: string;
+  priority?: string;
+  creator_id?: string;
 }
 
 export interface Task {
