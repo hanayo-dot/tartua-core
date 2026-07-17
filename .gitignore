@@ -3,3 +3,5 @@ migrate
 
 # Optional
 bin/
+
+.env
