@@ -32,3 +32,22 @@ func (s *CreatorService) Create(userID string, req *models.CreateCreatorRequest)
 func (s *CreatorService) Get(userID string) (*models.Creator, error) {
 	return s.repo.GetByUserID(userID)
 }
+
+func (s *CreatorService) Update(userID string, req *models.CreateCreatorRequest) error {
+	creator, err := s.repo.GetByUserID(userID)
+	if err != nil {
+		return err
+	}
+	if creator == nil {
+		return s.Create(userID, req)
+	}
+
+	creator.DisplayName = req.DisplayName
+	creator.Bio = req.Bio
+	creator.Country = req.Country
+	creator.PrimaryPlatform = req.PrimaryPlatform
+	creator.Niche = req.Niche
+	creator.AvatarURL = req.AvatarURL
+
+	return s.repo.Update(creator)
+}

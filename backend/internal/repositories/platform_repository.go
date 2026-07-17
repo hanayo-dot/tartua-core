@@ -37,5 +37,32 @@ func (r *PlatformRepository) GetAll() ([]models.Platform, error) {
 			Views:      0,
 			Engagement: 0,
 		},
+		{
+			ID:         "4",
+			Name:       "LinkedIn",
+			Username:   "@hanayo",
+			Connected:  true,
+			Followers:  860,
+			Views:      4200,
+			Engagement: 5.6,
+		},
+		{
+			ID:         "5",
+			Name:       "X",
+			Username:   "@hanayo",
+			Connected:  false,
+			Followers:  0,
+			Views:      0,
+			Engagement: 0,
+		},
+		{
+			ID:         "6",
+			Name:       "Pinterest",
+			Username:   "@hanayo",
+			Connected:  true,
+			Followers:  1980,
+			Views:      20180,
+			Engagement: 7.8,
+		},
 	}, nil
 }

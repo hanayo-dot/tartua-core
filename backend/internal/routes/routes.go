@@ -119,6 +119,7 @@ func RegisterRoutes(db *sql.DB, cfg *config.Config) *gin.Engine {
 		// Creator
 		protected.POST("/creator/profile", creatorHandler.Create)
 		protected.GET("/creator/profile", creatorHandler.Get)
+		protected.PUT("/creator/profile", creatorHandler.Update)
 
 		// Dashboard
 		protected.GET("/dashboard", dashboardHandler.Get)

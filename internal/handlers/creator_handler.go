@@ -77,3 +77,33 @@ func (h *CreatorHandler) Get(c *gin.Context) {
 
 	c.JSON(http.StatusOK, creator)
 }
+
+func (h *CreatorHandler) Update(c *gin.Context) {
+	var req models.CreateCreatorRequest
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	userID := c.GetString("userID")
+	if userID == "" {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": "unauthorized",
+		})
+		return
+	}
+
+	if err := h.service.Update(userID, &req); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Creator profile updated successfully",
+	})
+}
