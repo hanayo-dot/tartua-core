@@ -42,13 +42,18 @@ export default function DashboardPage() {
           api.getPlatforms(),
         ]);
 
-        setInsights(insightData);
-        setGoals(goalData);
-        setPlatforms(platformData);
+        // Guard against null/undefined API responses by falling back to empty arrays
+        const safeInsights = insightData || [];
+        const safeGoals = goalData || [];
+        const safePlatforms = platformData || [];
 
-        if (goalData.length > 0) {
-          const taskData = await api.getTasks(goalData[0].id);
-          setTasks(taskData);
+        setInsights(safeInsights);
+        setGoals(safeGoals);
+        setPlatforms(safePlatforms);
+
+        if (safeGoals.length > 0) {
+          const taskData = await api.getTasks(safeGoals[0].id);
+          setTasks(taskData || []);
         }
       } catch (err) {
         console.error('Dashboard load error:', err);
@@ -215,11 +220,15 @@ export default function DashboardPage() {
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, paddingTop: 12, borderTop: '1px solid var(--border)' }}>
                     <div>
                       <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: 4 }}>Followers</div>
-                      <div style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text)' }}>{platform.followers.toLocaleString()}</div>
+                      <div style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text)' }}>
+                        {platform.followers?.toLocaleString() ?? '0'}
+                      </div>
                     </div>
                     <div>
                       <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: 4 }}>Engagement</div>
-                      <div style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text)' }}>{platform.engagement.toFixed(1)}%</div>
+                      <div style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text)' }}>
+                        {platform.engagement?.toFixed(1) ?? '0.0'}%
+                      </div>
                     </div>
                   </div>
                 )}
